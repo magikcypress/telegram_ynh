@@ -1,0 +1,35 @@
+{
+    "name": "Telegram",
+    "id": "telegram",
+    "description": {
+        "en": "Telegram - a new era of messaging",
+        "fr": "SPIP - un nouvelle espace de messagerie"
+    },
+    "license": "GPL-3",
+    "developer": {
+        "name": "cyp",
+        "email": "cyp@rouquin.me",
+        "url": "http://rouquin.me"
+    },
+    "url": "http://www.telegram.org/",
+    "multi_instance": "true",
+    "arguments": {
+        "install" : [
+            {
+                "name": "domain",
+                "ask": {
+                    "en": "Choose a domain for Telegram"
+                },
+                "example": "domain.org"
+            },
+            {
+                "name": "path",
+                "ask": {
+                    "en": "Choose a path for Telegram"
+                },
+                "example": "/telegram",
+                "default": "/telegram"
+            }
+        ]
+    }
+}

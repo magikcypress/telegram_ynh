@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Retrieve arguments
+domain=$(sudo yunohost app setting telegram domain)
+path=$(sudo yunohost app setting telegram path)
+admin_telegram=$(sudo yunohost app setting telegram admin)
+
+# Check if admin is not null
+if [[ "$admin_telegram" = "" ]]; then
+    echo "Unable to upgrade, please contact support"
+    exit 1
+fi

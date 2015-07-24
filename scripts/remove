@@ -1,0 +1,3 @@
+#!/bin/bash
+
+domain=$(sudo yunohost app setting telegram domain)

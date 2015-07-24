@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Retrieve arguments
+domain=$1
+path=$2
+admin_telegram=$3
+
+# Check if admin exists
+sudo yunohost user list --json | grep -q "\"username\": \"$admin_telegram\""
+if [[ ! $? -eq 0 ]]; then
+    echo "Wrong admin"
+    exit 1
+fi
+sudo yunohost app setting spip admin -v $admin_telegram
+
+# Check domain/path availability
+sudo yunohost app checkurl $domain$path -a telegram
+if [[ ! $? -eq 0 ]]; then
+    exit 1
+fi
+
+sudo yunohost app setting telegram skipped_uris -v "/"
+sudo yunohost app ssowatconf
