@@ -3,7 +3,7 @@
     "id": "telegram",
     "description": {
         "en": "Telegram - a new era of messaging",
-        "fr": "SPIP - un nouvelle espace de messagerie"
+        "fr": "Telegram - un nouvelle espace de messagerie"
     },
     "license": "GPL-3",
     "developer": {
@@ -29,6 +29,15 @@
                 },
                 "example": "/telegram",
                 "default": "/telegram"
+            },
+            {
+                "name": "admin",
+                "type": "user",
+                "ask": {
+                    "en": "Choose the Telegram administrator (must be an existing YunoHost user)",
+                    "fr": "Administrateur de Telegram (doit être un utilisateur YunoHost existant)"
+                },
+                "example": "homer"
             }
         ]
     }
