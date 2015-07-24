@@ -10,3 +10,9 @@ if [[ "$admin_telegram" = "" ]]; then
     echo "Unable to upgrade, please contact support"
     exit 1
 fi
+
+# Modify Nginx configuration file and copy it to Nginx conf directory
+sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf*
+
+# Reload Nginx
+sudo service nginx reload

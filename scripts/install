@@ -19,5 +19,11 @@ if [[ ! $? -eq 0 ]]; then
     exit 1
 fi
 
+# Modify Nginx configuration file and copy it to Nginx conf directory
+sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
+sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/telegram.conf
+
 sudo yunohost app setting telegram skipped_uris -v "/"
 sudo yunohost app ssowatconf
+
+sudo service nginx reload
