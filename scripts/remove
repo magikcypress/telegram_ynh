@@ -1,7 +1,17 @@
 #!/bin/bash
 
-domain=$(sudo yunohost app setting telegram domain)
+source .fonctions	# Charge les fonctions génériques habituellement utilisées dans le script
 
-sudo rm -f /etc/nginx/conf.d/$domain.d/telegram.conf
+# Source app helpers
+source /usr/share/yunohost/helpers
 
-sudo service nginx reload
+# Récupère les infos de l'application.
+app=$YNH_APP_INSTANCE_NAME
+domain=$(sudo yunohost app setting $app domain)
+
+REMOVE_NGINX_CONF	# Suppression de la configuration nginx
+
+# Régénère la configuration de SSOwat
+sudo yunohost app ssowatconf
+
+echo -e "\e[0m"	# Restore normal color

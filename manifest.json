@@ -1,6 +1,7 @@
 {
     "name": "Telegram",
     "id": "telegram",
+    "packaging_format": 1,
     "description": {
         "en": "Telegram - a new era of messaging",
         "fr": "Telegram - un nouvelle espace de messagerie"
@@ -11,8 +12,14 @@
         "email": "cyp@rouquin.me",
         "url": "http://rouquin.me"
     },
+    "requirements": {
+        "yunohost": ">> 2.4.0"
+    },
     "url": "http://www.telegram.org/",
     "multi_instance": "true",
+    "services": [
+        "nginx"
+    ],
     "arguments": {
         "install" : [
             {

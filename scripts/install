@@ -1,29 +1,36 @@
 #!/bin/bash
 
-# Retrieve arguments
-domain=$1
-path=$2
-admin_telegram=$3
+source .fonctions
 
-# Check if admin exists
-sudo yunohost user list --json | grep -q "\"username\": \"$admin_telegram\""
-if [[ ! $? -eq 0 ]]; then
-    echo "Wrong admin"
-    exit 1
-fi
-sudo yunohost app setting telegram admin -v $admin_telegram
+CLEAN_SETUP () {
+	echo ""
+}
+TRAP_ON
 
-# Check domain/path availability
-sudo yunohost app checkurl $domain$path -a telegram
-if [[ ! $? -eq 0 ]]; then
-    exit 1
-fi
+domain=$YNH_APP_ARG_DOMAIN
+path=$YNH_APP_ARG_PATH
+admin=$YNH_APP_ARG_ADMIN
+
+app=$YNH_APP_INSTANCE_NAME
+
+# Source app helpers
+source /usr/share/yunohost/helpers
+
+CHECK_VAR "$app" "app name not set"
+
+CHECK_USER "$admin"
+
+CHECK_PATH
+
+sudo yunohost app setting $app domain -v $domain
+sudo yunohost app setting $app path -v $path
+sudo yunohost app setting $app admin -v $admin
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
 sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/telegram.conf
 
-sudo yunohost app setting telegram skipped_uris -v "/"
-sudo yunohost app ssowatconf
-
+# Reload Nginx and regenerate SSOwat conf
 sudo service nginx reload
+sudo yunohost app setting spip skipped_uris -v "/"
+sudo yunohost app ssowatconf
