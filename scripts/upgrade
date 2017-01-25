@@ -1,14 +1,31 @@
 #!/bin/bash
 
-# Retrieve arguments
-domain=$(sudo yunohost app setting telegram domain)
-path=$(sudo yunohost app setting telegram path)
-admin_telegram=$(sudo yunohost app setting telegram admin)
+# Exit on command errors and treat unset variables as an error
+set -eu
+
+# See comments in install script
+app=$YNH_APP_INSTANCE_NAME
+
+# Source YunoHost helpers
+source /usr/share/yunohost/helpers
+
+# Retrieve app settings
+domain=$(ynh_app_setting_get "$app" domain)
+path=$(ynh_app_setting_get "$app" path)
+admin=$(ynh_app_setting_get "$app" admin)
+
+CHECK_PATH	# Vérifie et corrige la syntaxe du path.
 
 # Check if admin is not null
-if [[ "$admin_telegram" = "" ]]; then
+if [[ "$admin" = "" ]]; then
     echo "Unable to upgrade, please contact support"
     exit 1
+fi
+
+# Check if admin is not null
+if [[ "$admin_spip" = "" ]]; then
+	echo "Unable to upgrade, please contact support"
+	exit 1
 fi
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
