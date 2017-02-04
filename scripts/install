@@ -32,5 +32,5 @@ sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/telegram.conf
 
 # Reload Nginx and regenerate SSOwat conf
 sudo service nginx reload
-sudo yunohost app setting spip skipped_uris -v "/"
+sudo yunohost app setting telegram skipped_uris -v "/"
 sudo yunohost app ssowatconf

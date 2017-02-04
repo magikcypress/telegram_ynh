@@ -23,7 +23,7 @@ if [[ "$admin" = "" ]]; then
 fi
 
 # Check if admin is not null
-if [[ "$admin_spip" = "" ]]; then
+if [[ "$admin_telegram" = "" ]]; then
 	echo "Unable to upgrade, please contact support"
 	exit 1
 fi

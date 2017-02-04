@@ -12,4 +12,4 @@ https://github.com/zhukov/webogram
 
 ### Version 1.0.0 (24/07/15)
 
-- Create Yunohost a
+- Create Yunohost app
