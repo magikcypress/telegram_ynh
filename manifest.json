@@ -3,22 +3,21 @@
     "id": "telegram",
     "packaging_format": 1,
     "requirements": {
-        "yunohost": ">> 2.4.0"
+        "yunohost": ">> 2.5.0"
     },
     "description": {
         "en": "Telegram - a new era of messaging",
         "fr": "Telegram - un nouvelle espace de messagerie"
     },
-    "version": "1.0.1",
-    "license": "free",
+    "version": "0.5.3",
+    "license": "GNU v3.0",
     "maintainer": {
         "name": "cyp",
         "email": "cyp@rouquin.me",
         "url": "http://www.rouquin.me"
     },
     "multi_instance": false,
-    "url": "http://www.telegram.org/",
-    "multi_instance": "true",
+    "url": "https://github.com/zhukov/webogram",
     "services": [
         "nginx"
     ],
@@ -26,27 +25,22 @@
         "install" : [
             {
                 "name": "domain",
+                "type": "domain",
                 "ask": {
-                    "en": "Choose a domain for Telegram"
+                    "en": "Choose a domain for Telegram",
+                    "fr": "Choisissez un domaine pour Telegram"
                 },
                 "example": "domain.org"
             },
             {
                 "name": "path",
+                "type": "path",
                 "ask": {
-                    "en": "Choose a path for Telegram"
+                    "en": "Choose a path for Telegram",
+                    "fr": "Choisissez un chemin pour Telegram"
                 },
                 "example": "/telegram",
                 "default": "/telegram"
-            },
-            {
-                "name": "admin",
-                "type": "user",
-                "ask": {
-                    "en": "Choose the Telegram administrator (must be an existing YunoHost user)",
-                    "fr": "Administrateur de Telegram (doit être un utilisateur YunoHost existant)"
-                },
-                "example": "admin"
             }
         ]
     }

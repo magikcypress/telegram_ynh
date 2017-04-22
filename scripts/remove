@@ -1,17 +1,28 @@
 #!/bin/bash
 
-source .fonctions	# Charge les fonctions génériques habituellement utilisées dans le script
+# Exit on command errors and treat unset variables as an error
+set -u
 
+# Loads the generic functions usually used in the script
+source _common
 # Source app helpers
 source /usr/share/yunohost/helpers
 
-# Récupère les infos de l'application.
+# Get multi-instances specific variables
 app=$YNH_APP_INSTANCE_NAME
-domain=$(sudo yunohost app setting $app domain)
 
-REMOVE_NGINX_CONF	# Suppression de la configuration nginx
+# Retrieve app settings
+domain=$(ynh_app_setting_get "$app" domain)
 
-# Régénère la configuration de SSOwat
+ynh_secure_remove "/opt/${app}"
+
+# Delete nginx config
+ynh_remove_nginx_config
+
+# Remove user
+ynh_system_user_delete $app
+
+# Reload SSOwat configuration
 sudo yunohost app ssowatconf
 
 echo -e "\e[0m"	# Restore normal color

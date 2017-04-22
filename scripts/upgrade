@@ -3,33 +3,54 @@
 # Exit on command errors and treat unset variables as an error
 set -eu
 
-# See comments in install script
-app=$YNH_APP_INSTANCE_NAME
-
+# Loads the generic functions usually used in the script
+source _common
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
+
+# See comments in install script
+app=$YNH_APP_INSTANCE_NAME
 
 # Retrieve app settings
 domain=$(ynh_app_setting_get "$app" domain)
 path=$(ynh_app_setting_get "$app" path)
-admin=$(ynh_app_setting_get "$app" admin)
 
-CHECK_PATH	# Vérifie et corrige la syntaxe du path.
+BACKUP_BEFORE_UPGRADE	# Backup the current version of the app
+ynh_clean_setup () {
+	BACKUP_FAIL_UPGRADE	# restore it if the upgrade fails
+}
+ynh_abort_if_errors	# Active trap pour arrêter le script si une erreur est détectée.
 
-# Check if admin is not null
-if [[ "$admin" = "" ]]; then
-    echo "Unable to upgrade, please contact support"
-    exit 1
-fi
+#=================================================
+# CHECK THE PATH
+#=================================================
 
-# Check if admin is not null
-if [[ "$admin_telegram" = "" ]]; then
-	echo "Unable to upgrade, please contact support"
-	exit 1
-fi
+path=$(ynh_normalize_url_path $path)	# Vérifie et corrige la syntaxe du path.
+
+final_path="/opt/${app}"
+
+# Update Webogram
+pushd $final_path
+git fetch
+git pull https://github.com/zhukov/webogram.git master
+git checkout $(git tag | tail -n 1)
+sudo npm install -g gulp
+npm install
+gulp clean
+gulp publish
+popd
+
+# Set permissions spip directory
+sudo chown -R $app: $final_path
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
-sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf*
+ynh_nginx_config
 
 # Reload Nginx
-sudo service nginx reload
+sudo systemctl reload nginx
+
+# Set app public
+ynh_app_setting_set "$app" unprotected_uris "/"
+
+# Reload SSOwat configuration
+sudo yunohost app ssowatconf
