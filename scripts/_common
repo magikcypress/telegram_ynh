@@ -132,6 +132,32 @@ ynh_compare_checksum_config () {
 	fi
 }
 
+install_node()
+{
+    local nvm_install_script="https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh"
+  
+    if [ ! -d "$NVM_INSTALL_DIR" ];
+    then
+        sudo mkdir $NVM_INSTALL_DIR
+    fi
+    sudo chown -R $app $NVM_INSTALL_DIR
+    cd $NVM_INSTALL_DIR
+
+    # Install nvm
+    sudo curl -o- $nvm_install_script | sudo NVM_DIR=$NVM_INSTALL_DIR bash
+
+    # Install latest nodejs
+    sudo su -c ". $NVM_INSTALL_DIR/nvm.sh && nvm install 0.10"
+}
+
+remove_node()
+{
+    if [ -d "$NVM_INSTALL_DIR" ];
+    then
+        sudo rm -rf $NVM_INSTALL_DIR
+    fi
+}
+
 ynh_nginx_config () {
 	finalnginxconf="/etc/nginx/conf.d/$domain.d/$app.conf"
 	ynh_compare_checksum_config "$finalnginxconf" 1
