@@ -22,6 +22,10 @@ ynh_remove_nginx_config
 # Remove user
 ynh_system_user_delete $app
 
+# Remove node
+nvm_install_dir="/opt/nvm"
+ynh_remove_nodejs
+
 # Reload SSOwat configuration
 sudo yunohost app ssowatconf
 

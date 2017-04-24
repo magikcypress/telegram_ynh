@@ -65,7 +65,7 @@ CHECK_FINALPATH () {	# Checks that the destination folder is not already in use.
 	fi
 }
 
-BACKUP_FAIL_UPGRADE () {
+ynh_backup_fail_upgrade () {
 	WARNING echo "Upgrade failed."
 	app_bck=${app//_/-}	# Replace all '_' by '-'
 	if sudo yunohost backup list | grep -q $app_bck-pre-upgrade$backup_number; then	# Vérifie l'existence de l'archive avant de supprimer l'application et de restaurer
@@ -75,7 +75,7 @@ BACKUP_FAIL_UPGRADE () {
 	fi
 }
 
-BACKUP_BEFORE_UPGRADE () {	# Backup the current version of the app, restore it if the upgrade fails
+ynh_backup_before_upgrade () {	# Backup the current version of the app, restore it if the upgrade fails
 	backup_number=1
 	old_backup_number=2
 	app_bck=${app//_/-}	# Replace all '_' by '-'
@@ -132,30 +132,69 @@ ynh_compare_checksum_config () {
 	fi
 }
 
-install_node()
-{
-    local nvm_install_script="https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh"
-  
-    if [ ! -d "$NVM_INSTALL_DIR" ];
-    then
-        sudo mkdir $NVM_INSTALL_DIR
-    fi
-    sudo chown -R $app $NVM_INSTALL_DIR
-    cd $NVM_INSTALL_DIR
+ynh_use_nodejs () {
+	nodejs_path=$(ynh_app_setting_get $app nodejs_path)
+	nodejs_version=$(ynh_app_setting_get $app nodejs_version)
 
-    # Install nvm
-    sudo curl -o- $nvm_install_script | sudo NVM_DIR=$NVM_INSTALL_DIR bash
+	# And store the command to use a specific version of node. Equal to `nvm use version`
+	nodejs_use_version="source $nvm_install_dir/nvm.sh; nvm use \"$nodejs_version\""
 
-    # Install latest nodejs
-    sudo su -c ". $NVM_INSTALL_DIR/nvm.sh && nvm install 0.10"
+	# Desactive set -u for this script.
+	set u
+	eval $nodejs_use_version
+	set -u
 }
 
-remove_node()
-{
-    if [ -d "$NVM_INSTALL_DIR" ];
-    then
-        sudo rm -rf $NVM_INSTALL_DIR
-    fi
+ynh_install_nodejs () {
+	local nodejs_version="$1"
+	local nvm_install_script="https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh"
+
+	local nvm_exec="source $nvm_install_dir/nvm.sh; nvm"
+
+	sudo mkdir -p "$nvm_install_dir"
+
+	# If nvm is not previously setup, install it
+	"$nvm_exec --version" > /dev/null 2>&1 || \
+	( cd "$nvm_install_dir"
+	echo "Installation of NVM"
+	sudo wget --no-verbose "$nvm_install_script" -O- | sudo NVM_DIR="$nvm_install_dir" bash > /dev/null)
+
+	# Fix Warning: /opt/nvm/nvm.sh: line 2678: MANPATH: unbound variable
+	export MANPATH="$nvm_install_dir"
+	# Install the requested version of nodejs
+	sudo su -c "$nvm_exec install \"$nodejs_version\" > /dev/null"
+
+	# Store the ID of this app and the version of node requested for it
+	echo "$YNH_APP_ID:$nodejs_version" | sudo tee --append "$nvm_install_dir/ynh_app_version"
+
+	# Get the absolute path of this version of node
+	nodejs_path="$(dirname "$(sudo su -c "$nvm_exec which \"$nodejs_version\"")")"
+
+	# Store nodejs_path and nodejs_version into the config of this app
+	ynh_app_setting_set $app nodejs_path $nodejs_path
+	ynh_app_setting_set $app nodejs_version $nodejs_version
+
+	ynh_use_nodejs
+}
+
+ynh_remove_nodejs () {
+	nodejs_version=$(ynh_app_setting_get $app nodejs_version)
+
+	# Remove the line for this app
+	sudo sed --in-place "/$YNH_APP_ID:$nodejs_version/d" "$nvm_install_dir/ynh_app_version"
+
+	# If none another app uses this version of nodejs, remove it.
+	if ! grep --quiet "$nodejs_version" "$nvm_install_dir/ynh_app_version"
+	then
+		sudo su -c "source $nvm_install_dir/nvm.sh; nvm deactivate; nvm uninstall \"$nodejs_version\" > /dev/null"
+	fi
+
+	# If none another app uses nvm, remove nvm and clean the root's bashrc file
+	if [ ! -s "$nvm_install_dir/ynh_app_version" ]
+	then
+		ynh_secure_remove "$nvm_install_dir"
+		sudo sed --in-place "/NVM_DIR/d" /root/.bashrc
+	fi
 }
 
 ynh_nginx_config () {

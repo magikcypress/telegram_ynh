@@ -15,9 +15,9 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get "$app" domain)
 path=$(ynh_app_setting_get "$app" path)
 
-BACKUP_BEFORE_UPGRADE	# Backup the current version of the app
+ynh_backup_before_upgrade	# Backup the current version of the app
 ynh_clean_setup () {
-	BACKUP_FAIL_UPGRADE	# restore it if the upgrade fails
+	ynh_backup_fail_upgrade	# restore it if the upgrade fails
 }
 ynh_abort_if_errors	# Active trap pour arrêter le script si une erreur est détectée.
 
@@ -28,6 +28,13 @@ ynh_abort_if_errors	# Active trap pour arrêter le script si une erreur est dét
 path=$(ynh_normalize_url_path $path)	# Vérifie et corrige la syntaxe du path.
 
 final_path="/opt/${app}"
+
+# Upgrade nodejs
+nvm_install_dir="/opt/nvm"
+cd $nvm_install_dir
+git fetch origin
+git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" origin`
+sudo bash $nvm_install_dir/nvm.sh
 
 # Update Webogram
 pushd $final_path

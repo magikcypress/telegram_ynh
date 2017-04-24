@@ -36,18 +36,16 @@ sudo mkdir "$final_path"
 ynh_app_setting_set $app final_path $final_path
 
 # Install de Node.js
-pushd /opt
-curl -sL https://deb.nodesource.com/setup_4.x | sudo bash -
-sudo apt-get -y install nodejs
-popd
+nvm_install_dir="/opt/nvm"
+ynh_install_nodejs 0.10
 
 # Get webogram
 sudo git clone https://github.com/zhukov/webogram.git $final_path
 
 # Install webogram
 pushd $final_path
-sudo npm install -g gulp
-npm install
+sudo $nodejs_path/npm install -g gulp
+$nodejs_path/npm install
 gulp clean
 gulp publish
 popd

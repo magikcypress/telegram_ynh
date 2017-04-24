@@ -37,6 +37,20 @@ ynh_system_user_create $app
  # Restore sources & data
 sudo cp -a ./sources "${final_path}"
 
+# Install nodejs
+nvm_install_dir="/opt/nvm"
+ynh_install_nodejs 0.10
+ynh_app_setting_set $app nodejs_path $nodejs_path
+ynh_use_nodejs
+
+# Install webogram
+pushd $final_path
+sudo $nodejs_path/npm install -g gulp
+$nodejs_path/npm install
+gulp clean
+gulp publish
+popd
+
 # Set permissions
 sudo chown -R $app: "${final_path}"
 
