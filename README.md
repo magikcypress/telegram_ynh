@@ -1,11 +1,6 @@
 # Telegram for YunoHost
 
-[![Latest Version](https://img.shields.io/badge/version-_--_-green.svg?style=flat)](https://github.com/YunoHost-Apps/telegram_ynh/releases)
-[![Status](https://img.shields.io/badge/status-testing-yellow.svg?style=flat)](https://github.com/YunoHost-Apps/telegram_ynh/milestones)
-[![Dependencies](https://img.shields.io/badge/dependencies-includes-lightgrey.svg?style=flat)](https://github.com/YunoHost-Apps/telegram_ynh#dependencies)
-[![GitHub license](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat)](https://raw.githubusercontent.com/YunoHost-Apps/telegram_ynh/master/LICENSE)
-[![Yunohost version](https://img.shields.io/badge/yunohost-2.5.6_tested-orange.svg?style=flat)](https://github.com/YunoHost/yunohost)
-[![GitHub issues](https://img.shields.io/github/issues/YunoHost-Apps/telegram_ynh.svg?style=flat)](https://github.com/YunoHost-Apps/telegram_ynh/issues)
+:warning: Deprecied please use [webogram](https://github.com/YunoHost-Apps/webogram_ynh/)
 
 ## Telegram c'est quoi ?
 
