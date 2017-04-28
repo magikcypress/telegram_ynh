@@ -1,6 +1,6 @@
-# Telegram for YunoHost
+# :warning: Deprecied please use [webogram](https://github.com/YunoHost-Apps/webogram_ynh/) :warning:
 
-:warning: Deprecied please use [webogram](https://github.com/YunoHost-Apps/webogram_ynh/)
+# Telegram for YunoHost
 
 ## Telegram c'est quoi ?
 
